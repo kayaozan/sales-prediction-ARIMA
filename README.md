@@ -1,8 +1,8 @@
 # Sales Prediction via ARIMA Model
 
-This repository contains sample code that demonstrates how to build an ARIMA model to forecast future sales.
+This repository contains sample code that demonstrates how to build an ARIMA model to forecast time series data.
 
-Since the sales data is a time series data and is observed to have a seasonal pattern, ARIMA is selected as the forecasting model.
+Since the sample is a time series data and is observed to have a seasonal pattern, ARIMA is selected as the forecasting model.
 
 
 ## Train & Test
