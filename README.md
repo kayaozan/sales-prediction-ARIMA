@@ -9,4 +9,6 @@ Since the sales data is a time series data and is observed to have a seasonal pa
 Within `arima-train.py`, seasonal parameters are listed. Using `auto-arima`, the best parameters are picked and tested.
 
 ## Forecast
-`arima-predict.py` uses the best model that is trained in the previous section to forecast.
+`arima-predict.py` uses the best model that is trained in the previous section.
+
+Each prediction is made step wise and being used as input for the next prediction.
