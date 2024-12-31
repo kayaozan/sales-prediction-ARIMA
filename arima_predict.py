@@ -24,7 +24,7 @@ def get_filters(df : pd.DataFrame, cols: list) -> list[dict]:
 with open('arima_models', mode='rb') as f:
     models = pickle.load(f)
 
-# A timeseries dataset that contains sales numbers by day, product category, subcategory etc.
+# A timeseries dataset that contains sales numbers by date, product category, subcategory etc.
 data = pd.read_pickle('SalesRetailSeason')
 
 # Determining the columns to select the subsection of dataset.
@@ -42,7 +42,9 @@ for filterKey in filterKeys:
         [data[key] == value for key, value in filterKey.items()])
     data_filtered = data.copy()[mask].set_index('Date')[['Sales']]
 
-    params = [m for m in models if m[0] == filterKey][0]
+    # Choosing the model with the corresponding filter keys
+    params = [model for model in models if 
+              all([model[key] == filterKey[key] for key in filterKey.keys()])][0]['params']
 
     y = [v.item() for v in data_filtered.values]
     prediction_values = []
@@ -52,7 +54,9 @@ for filterKey in filterKeys:
                                    inclusive='right')
 
     for t in range(n_predict):
-        model = ARIMA(y, order=params[1], seasonal_order=params[2])
+        model = ARIMA(y,
+                      order=params['order'],
+                      seasonal_order=params['seasonal_order'])
         model_fit = model.fit()
         output = model_fit.forecast()
         y_pred = int(output[0])
@@ -64,7 +68,13 @@ for filterKey in filterKeys:
                                columns=data_filtered.columns)
     all_predictions.append([filterKey,predictions])
 
-    plt.plot(data_filtered)
-    plt.plot(predictions, color='red')
+    # Adding data and forecast seperately
+    plt.plot(data_filtered, label='Actual Sales')
+    plt.plot(predictions, label='Forecasted Sales', color='red')
+    # Arranging labels etc.
+    plt.xlabel('Date')
+    plt.ylabel('Sales')
+    plt.legend()
+    plt.xticks(rotation=30)
     plt.title('-'.join([v for v in filterKey.values()]))
     plt.show()
